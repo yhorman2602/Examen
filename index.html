@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Productos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>📦 Inventario de Productos</h1>
+        <p>Gestiona el inventario de tu tienda o taller</p>
+    </header>
+
+    <main>
+        <!-- Product Form -->
+        <section class="form-section">
+            <h2 id="form-title">Agregar Producto</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="product-name">Nombre del Producto *</label>
+                        <input type="text" id="product-name" placeholder="Ej: Tornillo 1/4" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-category">Categoría *</label>
+                        <select id="product-category" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="Herramientas">Herramientas</option>
+                            <option value="Materiales">Materiales</option>
+                            <option value="Electrónica">Electrónica</option>
+                            <option value="Ropa">Ropa</option>
+                            <option value="Alimentos">Alimentos</option>
+                            <option value="Repuestos">Repuestos</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Precio (COP) *</label>
+                        <input type="number" id="product-price" placeholder="Ej: 5000" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-quantity">Cantidad *</label>
+                        <input type="number" id="product-quantity" placeholder="Ej: 100" min="0" required>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="product-description">Descripción</label>
+                        <textarea id="product-description" placeholder="Descripción opcional del producto" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span>➕</span> Agregar Producto
+                    </button>
+                    <button type="button" class="btn btn-secondary hidden" id="cancel-btn">
+                        <span>✖</span> Cancelar
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <span class="stat-icon">📦</span>
+                <div>
+                    <div class="stat-value" id="total-products">0</div>
+                    <div class="stat-label">Total Productos</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🔢</span>
+                <div>
+                    <div class="stat-value" id="total-stock">0</div>
+                    <div class="stat-label">Unidades en Stock</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">💰</span>
+                <div>
+                    <div class="stat-value" id="total-value">$0</div>
+                    <div class="stat-label">Valor Total</div>
+                </div>
+            </div>
+            <div class="stat-card warning" id="low-stock-card">
+                <span class="stat-icon">⚠️</span>
+                <div>
+                    <div class="stat-value" id="low-stock">0</div>
+                    <div class="stat-label">Stock Bajo (&lt;10)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Filter -->
+        <section class="controls-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Buscar por nombre o descripción...">
+            </div>
+            <div class="filter-group">
+                <label for="filter-category">Categoría:</label>
+                <select id="filter-category">
+                    <option value="">Todas</option>
+                    <option value="Herramientas">Herramientas</option>
+                    <option value="Materiales">Materiales</option>
+                    <option value="Electrónica">Electrónica</option>
+                    <option value="Ropa">Ropa</option>
+                    <option value="Alimentos">Alimentos</option>
+                    <option value="Repuestos">Repuestos</option>
+                    <option value="Otros">Otros</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sort-by">Ordenar por:</label>
+                <select id="sort-by">
+                    <option value="name">Nombre</option>
+                    <option value="category">Categoría</option>
+                    <option value="price">Precio</option>
+                    <option value="quantity">Cantidad</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Products Table -->
+        <section class="table-section">
+            <div class="table-header">
+                <h2>Lista de Productos</h2>
+                <span id="products-count" class="count-badge">0 productos</span>
+            </div>
+            <div class="table-wrapper">
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-body">
+                    </tbody>
+                </table>
+                <div id="empty-state" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>No hay productos registrados</p>
+                    <p class="empty-hint">Usa el formulario de arriba para agregar tu primer producto</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <h3>⚠️ Confirmar Eliminación</h3>
+            <p>¿Estás seguro de que deseas eliminar el producto <strong id="modal-product-name"></strong>?</p>
+            <p class="modal-hint">Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirm-delete">🗑️ Eliminar</button>
+                <button class="btn btn-secondary" id="cancel-delete">✖ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

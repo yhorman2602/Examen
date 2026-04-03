@@ -1,0 +1,14 @@
+{
+    "name": "yhorman/examen",
+    "autoload": {
+        "psr-4": {
+            "Yhorman\\Examen\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yhorman"
+        }
+    ],
+    "require": {}
+}
